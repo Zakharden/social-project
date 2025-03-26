@@ -44,7 +44,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url("{{ url_for('static', filename='login.jpg') }}") center/cover;
+            background: url("{{ url_for('static', filename='images/login.jpg') }}") center/cover;
             filter: blur(8px);
             z-index: -1;
         }
@@ -153,6 +153,7 @@
         <h2 class="form-title">Вход в аккаунт</h2>
         
         <form action="/login" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" required placeholder="example@gmail.com">
@@ -162,7 +163,15 @@
                 <label for="password">Пароль</label>
                 <input type="password" id="password" name="password" required placeholder="••••••••">
             </div>
-            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} mb-3">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
             <button type="submit" class="btn-login">Войти</button>
             
             <a href="/reset-password" class="forgot-password">Забыли пароль?</a>
@@ -173,5 +182,32 @@
             <a href="/register" class="btn-register">Зарегистрироваться</a>
         </div>
     </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Проверяем email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                e.preventDefault();
+                alert('Пожалуйста, введите корректный email');
+                return;
+            }
+            
+            // Проверяем пароль
+            if (password.length < 6) {
+                e.preventDefault();
+                alert('Пароль должен содержать минимум 6 символов');
+                return;
+            }
+
+            // Показываем индикатор загрузки
+            const submitButton = this.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = 'Вход...';
+        });
+    </script>
 </body>
 </html>
