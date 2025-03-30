@@ -238,7 +238,7 @@
     <a href="/search" class="back-button">← Вернуться</a>
     <div class="container">
         <div class="profile-header">
-            <img src="{{ user.photo or url_for('static', filename='images/default-avatar.jpg') }}" class="profile-photo" alt="Фото профиля">
+            <img src="{{ user.photo_path or url_for('static', filename='images/default-avatar.jpg') }}" class="profile-photo" alt="Фото профиля">
             <h2>{{ user.first_name }} {{ user.last_name }}</h2>
             <div class="rating mb-2">
                 {% for i in range(5) %}
@@ -259,17 +259,25 @@
             <div class="mb-3">
                 <h5>Могу научить:</h5>
                 <div class="skills-list">
-                    {% for skill in user.teach_skills %}
-                        <span class="skill-tag">{{ skill }}</span>
-                    {% endfor %}
+                    {% if user.teach_skills %}
+                        {% for skill in user.teach_skills %}
+                            <span class="skill-tag">{{ skill.strip() }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">Нет навыков</p>
+                    {% endif %}
                 </div>
             </div>
             <div>
                 <h5>Хочу научиться:</h5>
                 <div class="skills-list">
-                    {% for skill in user.learn_skills %}
-                        <span class="skill-tag">{{ skill }}</span>
-                    {% endfor %}
+                    {% if user.learn_skills %}
+                        {% for skill in user.learn_skills %}
+                            <span class="skill-tag">{{ skill.strip() }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">Нет навыков</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
