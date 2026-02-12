@@ -1,5 +1,3 @@
-(Due to technical issues, the search service is temporarily unavailable.)
-
 ```markdown
 # Инструкция по запуску Flask-приложения
 
