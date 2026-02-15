@@ -263,8 +263,8 @@
                             <h2 class="profile-name">{{ profile.name }}</h2>
                             <div class="profile-city">{{ profile.city }}</div>
                             <div class="profile-skills">
-                                {% for skill in profile.skills.split(',') %}
-                                    <span class="skill-tag">{{ skill.strip() }}</span>
+                                {% for skill in profile.skills %}
+                                    <span class="skill-tag">{{ skill }}</span>
                                 {% endfor %}
                             </div>
                             <p class="profile-description">{{ profile.description }}</p>

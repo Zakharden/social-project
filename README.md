@@ -1,178 +1,87 @@
-# MVP. Social-version
+# Skill Exchange Platform (Vetka) - MVP
 
-# Skill Exchange Platform
+Flask-приложение для обмена навыками: пользователи создают профили, указывают навыки (могу научить / хочу научиться), находят людей через поиск, оставляют отзывы, добавляют слоты доступности и договариваются о встречах. Дополнительно: Random Coffee (встречи сообщества) и простой блог с внешними статьями.
 
-## Настройка базы данных
+## Быстрый старт (Docker: приложение + инфраструктура)
 
-1. Создайте базу данных PostgreSQL:
-```sql
-CREATE DATABASE skillswap;
-```
-
-2. Создайте пользователя и назначьте права:
-```sql
-CREATE USER skilluser WITH PASSWORD 'skillpass';
-GRANT ALL PRIVILEGES ON DATABASE skillswap TO skilluser;
-```
-
-3. Подключитесь к базе данных:
-```bash
-psql -d skillswap -U skilluser
-```
-
-4. Выполните SQL-скрипт для создания таблиц:
-```bash
-psql -d skillswap -U skilluser -f create_tables.sql
-```
-
-## Структура базы данных
-
-### Таблица users
-- id: SERIAL PRIMARY KEY
-- email: VARCHAR(255) UNIQUE NOT NULL
-- password_hash: VARCHAR(255) NOT NULL
-- first_name: VARCHAR(100) NOT NULL
-- last_name: VARCHAR(100) NOT NULL
-- birth_date: DATE NOT NULL
-- location: VARCHAR(255) NOT NULL
-- photo_path: VARCHAR(255) DEFAULT '/static/images/default-avatar.jpg'
-- teach_skills: TEXT[]
-- learn_skills: TEXT[]
-- languages: TEXT[]
-- interests: TEXT[]
-- work_place: VARCHAR(255)
-- study_place: VARCHAR(255)
-- about: TEXT
-- social_vk: VARCHAR(255)
-- social_tg: VARCHAR(255)
-- social_gh: VARCHAR(255)
-- created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
-### Таблица password_reset_tokens
-- id: SERIAL PRIMARY KEY
-- user_id: INTEGER REFERENCES users(id)
-- token: VARCHAR(255) NOT NULL
-- created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-- expires_at: TIMESTAMP NOT NULL
-- used: BOOLEAN DEFAULT FALSE
-
-### Таблица reviews
-- id: SERIAL PRIMARY KEY
-- reviewer_id: INTEGER REFERENCES users(id)
-- reviewed_id: INTEGER REFERENCES users(id)
-- rating: INTEGER CHECK (rating >= 1 AND rating <= 5)
-- comment: TEXT
-- created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
-### Таблица exchanges
-- id: SERIAL PRIMARY KEY
-- user_id: INTEGER REFERENCES users(id)
-- title: VARCHAR(255) NOT NULL
-- description: TEXT
-- status: VARCHAR(50) DEFAULT 'active'
-- progress: INTEGER DEFAULT 0
-- created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
-### Таблица available_slots
-- id: SERIAL PRIMARY KEY
-- user_id: INTEGER REFERENCES users(id)
-- start_time: TIMESTAMP NOT NULL
-- end_time: TIMESTAMP NOT NULL
-- is_booked: BOOLEAN DEFAULT FALSE
-- created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
-## Настройка приложения
-
-1. Установите зависимости:
-```bash
-pip install -r requirements.txt
-```
-
-2. Создайте файл с переменными окружения:
+1. Создать `.env`:
 ```bash
 cp .env.example .env
 ```
 
-3. Настройте переменные окружения в файле .env:
-```
-FLASK_APP=app-v4.py
-FLASK_ENV=development
-DATABASE_URL=postgresql://skilluser:skillpass@localhost/skillswap
-SECRET_KEY=your-secret-key
-SMTP_SERVER=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USERNAME=your-email@gmail.com
-SMTP_PASSWORD=your-app-password
-```
-
-4. Запустите приложение:
+2. Поднять сервисы:
 ```bash
-flask run
+docker compose up --build
 ```
 
-## Функциональность
+3. Открыть:
+- приложение: http://localhost:5000 (если порт занят: `WEB_PORT=5001 docker compose up --build`)
+- SMTP web UI (Mailpit): http://localhost:8025
 
-- Регистрация и авторизация пользователей
-- Восстановление пароля через email
-- Просмотр и редактирование профиля
-- Загрузка фотографии профиля
-- Добавление и редактирование навыков
-- Система отзывов
-- Календарь доступных слотов
-- Система обмена навыками
-- Уведомления
+База данных PostgreSQL поднимается в контейнере `db` и автоматически применяет `create_tables.sql`.
 
-```markdown
-# Инструкция по запуску Flask-приложения
+## Локальный запуск (venv; Postgres или SQLite)
 
-## Предварительные требования
-- Установленный Python 3.6+
-- Менеджер пакетов `pip`
-
-## 1. Установка зависимостей
-Создайте файл `requirements.txt` в корне проекта и добавьте:
-```txt
-Flask>=2.0.0
-```
-
-## 2. Настройка виртуального окружения
-### Для macOS/Linux:
+1. Виртуальное окружение и зависимости:
 ```bash
-python3 -m venv .venv          # Создать окружение
-source .venv/bin/activate      # Активировать
-pip install -r requirements.txt # Установить зависимости
-```
-
-### Для Windows:
-```cmd
-python -m venv .venv
-.venv\Scripts\activate
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## 3. Запуск приложения
+2. Переменные окружения:
+```bash
+cp .env.example .env
+```
+Отредактируйте `.env` (минимум: `SECRET_KEY`, `DATABASE_URL` или `DB_*`). Для Postgres из `docker compose` по умолчанию `localhost:5433`. Для быстрой локальной работы без Postgres установите `DB_DIALECT=sqlite` (файл `SQLITE_PATH`, по умолчанию `database.db`).
+
+3. Инфраструктура (если Postgres/SMTP из Docker):
+```bash
+docker compose up -d db mailpit
+```
+
+4. Запуск приложения:
 ```bash
 python app.py
 ```
+Если порт 5000 занят: `PORT=5001 python app.py`.
 
-Сервер запустится на http://localhost:5000 или http://127.0.0.1:5000.
+## Что внутри (снимки интерфейса)
 
----
+Папка ` screenshots` содержит актуальные скриншоты основных страниц:
 
-## Если возникают ошибки
-### Ошибка "ModuleNotFoundError"
-- Убедитесь, что виртуальное окружение активировано (в терминале должно быть `(.venv)` в начале строки).
-- Переустановите зависимости:
-  ```bash
-  pip uninstall Flask
-  pip install -r requirements.txt
-  ```
+- `Main.png`, `Main page.png` — главная.
+- `login.png`, `registration.png` — аутентификация.
+- `users.png`, `activities.png` — поиск и активность сообщества.
+- `Store.png` — магазин/донаты.
+- `B2B.png` — раздел для компаний.
+- `about project.png`, `comments.png` — блоки «О нас» и отзывы.
 
-### Приложение не запускается
-- Проверьте, что файл `app.py` существует и находится в корне проекта.
-- Убедитесь, что порт 5000 не занят другой программой.
+Главные экраны:
 
----
+![Главная](/%20screenshots/Main.png)
+![Магазин](/%20screenshots/Store.png)
+![B2B](/%20screenshots/B2B.png)
 
-> **Примечание:** Для выхода из виртуального окружения выполните `deactivate`.
-```
+Остальные скриншоты см. прямо в директории ` screenshots`.
+
+
+## Переменные окружения
+
+- `SECRET_KEY`: секрет для сессий/CSRF (в продакшене обязателен).
+- `DATABASE_URL`: строка подключения Postgres `postgresql://user:pass@host:port/db`.
+- Альтернатива вместо `DATABASE_URL`: `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, опционально `DB_SSLMODE`.
+- `SMTP_SERVER`, `SMTP_PORT`, `SMTP_USE_TLS`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM`: отправка писем для сброса пароля.
+- `UPLOAD_FOLDER`: папка для аватарок (по умолчанию `static/avatars`).
+- `HOST`, `PORT`, `FLASK_DEBUG`: параметры dev-сервера при запуске через `python app.py`.
+
+## Структура проекта
+
+- `app_v4.py`: основной код приложения (Flask `app`).
+- `app.py`: точка входа (`python app.py`).
+- `create_tables.sql`: схема БД (idempotent, можно запускать повторно).
+- `templates/`, `static/`: фронтенд (Jinja + статика).
+
+## Примечания
+
+- `app-v2.py` и `app-v3.py` оставлены как исторические прототипы и не используются текущим запуском.

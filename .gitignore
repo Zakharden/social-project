@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# macOS
+.DS_Store
+
+# Local Docker client config used for debugging (not part of the project)
+.docker-tmp/
+
 # C extensions
 *.so
 
