@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Coffee - Vetka</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/random-coffee.css') }}">
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="logo">Vetka</a>
+        <nav class="nav-links">
+            <a href="/" class="nav-link">Главная</a>
+            <a href="/search" class="nav-link">Поиск</a>
+            <a href="/blog" class="nav-link">Блог</a>
+            <a href="/community" class="nav-link">Сообщество</a>
+            <a href="/about" class="nav-link">О нас</a>
+            <a href="/contact" class="nav-link">Контакты</a>
+        </nav>
+        {% if session.user_id %}
+            <a href="/logout" class="logout-btn">Выйти</a>
+        {% else %}
+            <a href="/login" class="login-btn">Войти</a>
+        {% endif %}
+    </header>
+
+    <div class="container">
+        <section class="section">
+            <h1>Random Coffee</h1>
+            <p>Найдите интересных собеседников для обмена опытом и идеями.</p>
+            
+            <button class="create-meeting-btn" onclick="openModal()">Создать встречу</button>
+
+            <div class="meetings-grid">
+                {% for meeting in meetings %}
+                <div class="meeting-card">
+                    <div class="meeting-info">
+                        <h3 class="meeting-title">{{ meeting.title }}</h3>
+                        <div class="meeting-meta">
+                            <div>Дата: {{ meeting.date }}</div>
+                            <div>Город: {{ meeting.city }}</div>
+                            <div>Организатор: {{ meeting.organizer_name }}, {{ meeting.organizer_age }} лет</div>
+                        </div>
+                        <div class="meeting-description">{{ meeting.description }}</div>
+                        <span class="meeting-type {{ 'online' if meeting.is_online else 'offline' }}">
+                            {{ 'Онлайн' if meeting.is_online else 'Оффлайн' }}
+                        </span>
+                    </div>
+                    <div class="meeting-footer">
+                        <a href="{{ meeting.link }}" class="btn-join" target="_blank">Присоединиться</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <!-- Модальное окно создания встречи -->
+    <div id="createMeetingModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2>Создать встречу</h2>
+            <form id="createMeetingForm" action="/join-random-coffee" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="form-group">
+                    <label for="title">Тема общения</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="date">Дата встречи</label>
+                    <input type="datetime-local" id="date" name="date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="city" id="cityLabel">Город</label>
+                    <input type="text" id="city" name="city">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Описание</label>
+                    <textarea id="description" name="description" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="switch">
+                        <input type="checkbox" id="is_online" name="is_online">
+                        <span class="slider round"></span>
+                        <span class="switch-label">Онлайн встреча</span>
+                    </label>
+                </div>
+
+                <div class="form-group" id="linkGroup">
+                    <label for="link" id="linkLabel">Ссылка на встречу</label>
+                    <input type="url" id="link" name="link" required>
+                </div>
+
+                <button type="submit" class="submit-btn">Создать встречу</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('createMeetingModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('createMeetingModal').style.display = 'none';
+        }
+
+        document.getElementById('is_online').addEventListener('change', function() {
+            const cityInput = document.getElementById('city');
+            const cityLabel = document.getElementById('cityLabel');
+            const linkLabel = document.getElementById('linkLabel');
+            
+            if (this.checked) {
+                cityInput.removeAttribute('required');
+                cityLabel.textContent = 'Город (необязательно)';
+                linkLabel.textContent = 'Ссылка на онлайн встречу';
+            } else {
+                cityInput.setAttribute('required', '');
+                cityLabel.textContent = 'Город';
+                linkLabel.textContent = 'Ссылка на Telegram';
+            }
+        });
+
+        // Закрытие модального окна при клике вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('createMeetingModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html> 

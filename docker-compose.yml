@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME:-skillswap}
+      POSTGRES_USER: ${DB_USER:-skilluser}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change-me}
+    ports:
+      - "${DB_HOST_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./create_tables.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025" # web UI
+      - "1025:1025" # SMTP
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    environment:
+      SECRET_KEY: ${SECRET_KEY:-dev-only-change-me}
+      FLASK_DEBUG: ${FLASK_DEBUG:-1}
+      HOST: 0.0.0.0
+      PORT: 5000
+
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-skillswap}
+      DB_USER: ${DB_USER:-skilluser}
+      DB_PASSWORD: ${DB_PASSWORD:-change-me}
+
+      SMTP_SERVER: mailpit
+      SMTP_PORT: 1025
+      SMTP_USE_TLS: 0
+      SMTP_FROM: ${SMTP_FROM:-noreply@localhost}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+    ports:
+      - "${WEB_PORT:-5000}:5000"
+    volumes:
+      - avatars:/app/static/avatars
+
+volumes:
+  pgdata:
+  avatars:

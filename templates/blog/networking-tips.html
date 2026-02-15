@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10 советов по эффективному нетворкингу - Skill Exchange Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto', sans-serif;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{{ url_for('static', filename='images/networking-tips.jpg') }}") center/cover;
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #FFE082;
+            text-decoration: none;
+            border-radius: 24px;
+            margin-bottom: 30px;
+            transition: background 0.3s ease;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .back-button:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        h1 {
+            color: #424242;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            color: #616161;
+            margin-bottom: 40px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .article-content {
+            text-align: left;
+            color: #424242;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .article-content h2 {
+            color: #212121;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .article-content p {
+            margin-bottom: 20px;
+        }
+
+        .article-content ul {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        .article-content li {
+            margin-bottom: 15px;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .article-content li:before {
+            content: "•";
+            color: #FFE082;
+            position: absolute;
+            left: 0;
+            font-size: 1.5em;
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid #FFE082;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #616161;
+            font-style: italic;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .article-footer {
+            border-top: 1px solid #EEEEEE;
+            padding-top: 20px;
+            margin-top: 40px;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .author-name {
+            color: #424242;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .article-meta {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/blog" class="back-button">← Назад к блогу</a>
+    
+    <div class="container">
+        <h1>10 советов по эффективному нетворкингу</h1>
+        
+        <div class="article-meta">
+            <div class="meta-item">
+                <span>📅</span>
+                <span>10 марта 2024</span>
+            </div>
+            <div class="meta-item">
+                <span>⏱️</span>
+                <span>10 минут чтения</span>
+            </div>
+            <div class="meta-item">
+                <span>👤</span>
+                <span>Мария Иванова</span>
+            </div>
+        </div>
+
+        <div class="article-content">
+            <p>
+                Нетворкинг - это искусство построения и поддержания полезных профессиональных связей. 
+                В современном мире это один из ключевых навыков для карьерного роста. В этой статье мы 
+                рассмотрим 10 практических советов, которые помогут вам стать более эффективным в 
+                нетворкинге.
+            </p>
+
+            <h2>1. Будьте искренними</h2>
+            <p>
+                Искренность - основа любых долгосрочных отношений. Не пытайтесь произвести впечатление 
+                любой ценой. Вместо этого покажите подлинный интерес к собеседнику и его деятельности.
+            </p>
+
+            <h2>2. Слушайте больше, чем говорите</h2>
+            <p>
+                Хороший собеседник - это прежде всего хороший слушатель. Задавайте открытые вопросы и 
+                внимательно слушайте ответы. Это поможет вам лучше понять собеседника и найти точки 
+                соприкосновения.
+            </p>
+
+            <blockquote>
+                "Нетворкинг - это не о том, сколько людей вы знаете, а о том, сколько людей знают вас 
+                и хотят с вами общаться."
+            </blockquote>
+
+            <h2>3. Будьте готовы помогать</h2>
+            <p>
+                Нетворкинг - это улица с двусторонним движением. Предлагайте помощь и поддержку, не 
+                ожидая немедленной отдачи. Это создаст основу для долгосрочных отношений.
+            </p>
+
+            <h2>4. Используйте социальные сети</h2>
+            <p>
+                Современные технологии предоставляют множество возможностей для нетворкинга:
+            </p>
+            <ul>
+                <li>Ведите профессиональный профиль в LinkedIn</li>
+                <li>Участвуйте в тематических группах</li>
+                <li>Делитесь полезным контентом</li>
+                <li>Поддерживайте связи через регулярные публикации</li>
+            </ul>
+
+            <h2>5. Посещайте мероприятия</h2>
+            <p>
+                Офлайн-встречи остаются важной частью нетворкинга. Посещайте:
+            </p>
+            <ul>
+                <li>Профессиональные конференции</li>
+                <li>Встречи по интересам</li>
+                <li>Мастер-классы и воркшопы</li>
+                <li>Нетворкинг-мероприятия</li>
+            </ul>
+
+            <h2>6. Поддерживайте связи</h2>
+            <p>
+                Регулярно связывайтесь с вашими контактами:
+            </p>
+            <ul>
+                <li>Отправляйте поздравления с важными датами</li>
+                <li>Делитесь релевантными новостями</li>
+                <li>Приглашайте на встречи</li>
+                <li>Помогайте в решении проблем</li>
+            </ul>
+
+            <h2>7. Будьте конкретны</h2>
+            <p>
+                При обращении к контактам всегда четко формулируйте, что именно вам нужно. Это 
+                увеличит вероятность получения положительного ответа.
+            </p>
+
+            <h2>8. Создавайте ценность</h2>
+            <p>
+                Старайтесь быть полезным для вашей сети:
+            </p>
+            <ul>
+                <li>Делитесь знаниями и опытом</li>
+                <li>Представляйте людей друг другу</li>
+                <li>Рекомендуйте полезные ресурсы</li>
+                <li>Организуйте тематические встречи</li>
+            </ul>
+
+            <h2>9. Будьте последовательны</h2>
+            <p>
+                Нетворкинг требует времени и постоянных усилий. Регулярно выделяйте время на поддержание 
+                связей и развитие новых контактов.
+            </p>
+
+            <h2>10. Не забывайте о благодарности</h2>
+            <p>
+                Всегда благодарите людей за помощь и поддержку. Это укрепляет отношения и создает 
+                позитивную репутацию.
+            </p>
+        </div>
+
+        <div class="article-footer">
+            <div class="author-info">
+                <div class="author-name">Мария Иванова</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

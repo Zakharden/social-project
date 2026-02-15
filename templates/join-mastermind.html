@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мастермайнды - Skill Exchange Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto', sans-serif;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{{ url_for('static', filename='images/mastermind.jpg') }}") center/cover;
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #FFE082;
+            text-decoration: none;
+            border-radius: 24px;
+            margin-bottom: 30px;
+            transition: background 0.3s ease;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .back-button:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        h1 {
+            color: #424242;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        .description {
+            color: #616161;
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .benefit-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            text-align: left;
+        }
+
+        .benefit-icon {
+            font-size: 2em;
+            color: #FFE082;
+            margin-bottom: 10px;
+        }
+
+        .benefit-title {
+            color: #424242;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .benefit-text {
+            color: #616161;
+            font-size: 0.9em;
+        }
+
+        .active-groups {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .groups-title {
+            color: #424242;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+        }
+
+        .group-item {
+            padding: 20px;
+            border: 1px solid #EEEEEE;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .group-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .group-title {
+            color: #424242;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .group-info {
+            color: #616161;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .group-meta {
+            display: flex;
+            gap: 15px;
+            color: #757575;
+            font-size: 0.8em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #616161;
+            font-size: 0.9em;
+        }
+
+        select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #BDBDBD;
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        select:focus, textarea:focus {
+            outline: none;
+            border-color: #616161;
+        }
+
+        .btn-join {
+            width: 100%;
+            padding: 14px;
+            background: #616161;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-join:hover {
+            background: #757575;
+        }
+
+        @media (max-width: 768px) {
+            .benefits {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/community" class="back-button">← Назад к сообществу</a>
+    
+    <div class="container">
+        <h1>Мастермайнды</h1>
+        
+        <p class="description">
+            Мастермайнды - это регулярные встречи группы из 4-6 человек для обмена опытом, решения 
+            проблем и достижения целей. Участники поддерживают друг друга, делятся знаниями и помогают 
+            в развитии.
+        </p>
+
+        <div class="benefits">
+            <div class="benefit-item">
+                <div class="benefit-icon">🤝</div>
+                <div class="benefit-title">Поддержка сообщества</div>
+                <div class="benefit-text">Получайте поддержку и обратную связь от единомышленников</div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">👥</div>
+                <div class="benefit-title">Разные перспективы</div>
+                <div class="benefit-text">Рассматривайте проблемы с разных точек зрения</div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">🎯</div>
+                <div class="benefit-title">Достижение целей</div>
+                <div class="benefit-text">Регулярная отчетность помогает двигаться вперед</div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">💡</div>
+                <div class="benefit-title">Нетворкинг</div>
+                <div class="benefit-text">Расширяйте профессиональную сеть контактов</div>
+            </div>
+        </div>
+
+        <div class="active-groups">
+            <h3 class="groups-title">Активные группы</h3>
+            <div class="group-item">
+                <div class="group-title">Python Development</div>
+                <div class="group-info">
+                    Группа для разработчиков Python, где мы обсуждаем лучшие практики, 
+                    архитектуру приложений и новые технологии.
+                </div>
+                <div class="group-meta">
+                    <span>👥 5 участников</span>
+                    <span>📅 Встречи по понедельникам</span>
+                </div>
+            </div>
+            <div class="group-item">
+                <div class="group-title">UI/UX Design</div>
+                <div class="group-info">
+                    Обмен опытом в области дизайна интерфейсов, обсуждение трендов и 
+                    методологий проектирования.
+                </div>
+                <div class="group-meta">
+                    <span>👥 4 участника</span>
+                    <span>📅 Встречи по средам</span>
+                </div>
+            </div>
+            <div class="group-item">
+                <div class="group-title">Marketing</div>
+                <div class="group-info">
+                    Группа для маркетологов, где мы обсуждаем стратегии, аналитику и 
+                    новые каналы продвижения.
+                </div>
+                <div class="group-meta">
+                    <span>👥 6 участников</span>
+                    <span>📅 Встречи по пятницам</span>
+                </div>
+            </div>
+        </div>
+
+        <form action="/join-mastermind" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <div class="form-group">
+                <label for="topic">Тема мастермайнда</label>
+                <select id="topic" name="topic" required>
+                    <option value="">Выберите тему</option>
+                    <option value="programming">Программирование</option>
+                    <option value="design">Дизайн</option>
+                    <option value="marketing">Маркетинг</option>
+                    <option value="business">Бизнес</option>
+                    <option value="personal">Личное развитие</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="experience">Уровень опыта</label>
+                <select id="experience" name="experience" required>
+                    <option value="">Выберите уровень</option>
+                    <option value="beginner">Начинающий</option>
+                    <option value="intermediate">Средний</option>
+                    <option value="advanced">Продвинутый</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="goals">Ваши цели в мастермайнде</label>
+                <textarea id="goals" name="goals" required placeholder="Опишите, чего вы хотите достичь, участвуя в мастермайнде"></textarea>
+            </div>
+            
+            <button type="submit" class="btn-join">Присоединиться к мастермайнду</button>
+        </form>
+    </div>
+</body>
+</html> 

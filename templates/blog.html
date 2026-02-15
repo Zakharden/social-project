@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блог - Vetka</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Roboto', sans-serif;
+            position: relative;
+            background-color: #f5f5f5;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{{ url_for('static', filename='images/blog.jpg') }}") center/cover;
+            filter: blur(8px);
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            background: linear-gradient(45deg, #FFE082, #FFD54F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #424242;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 1.1em;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .nav-link:hover {
+            color: #FFD54F;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .write-article-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .write-article-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+            background: linear-gradient(45deg, #FF8E53, #FF6B6B);
+        }
+
+        .write-article-btn i {
+            font-size: 1.2em;
+        }
+
+        .article-modal .modal-dialog {
+            max-width: 500px;
+            margin: 1.75rem auto;
+            display: flex;
+            align-items: center;
+            min-height: calc(100% - 3.5rem);
+        }
+
+        .article-modal .modal-content {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            margin: auto;
+            background: #ffffff;
+        }
+
+        .article-modal .modal-header {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 20px 30px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .article-modal .modal-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .article-modal .btn-close {
+            color: white;
+            opacity: 1;
+            text-shadow: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .article-modal .btn-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .article-modal .modal-body {
+            padding: 30px;
+        }
+
+        .article-modal .form-label {
+            font-weight: 500;
+            color: #2D3436;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            display: block;
+        }
+
+        .article-modal .form-control {
+            border-radius: 10px;
+            border: 2px solid #E0E0E0;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+            height: 45px;
+            font-size: 0.95em;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .article-modal textarea.form-control {
+            height: 100px;
+            resize: vertical;
+            overflow-y: auto;
+            min-height: 100px;
+        }
+
+        .article-modal .form-control:focus {
+            border-color: #FF6B6B;
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
+            outline: none;
+        }
+
+        .article-modal .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .article-modal .btn {
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            flex: 1;
+            border-radius: 10px;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .article-modal .btn-secondary {
+            background: #F5F5F5;
+            border: 2px solid #E0E0E0;
+            color: #424242;
+        }
+
+        .article-modal .btn-secondary:hover {
+            background: #EEEEEE;
+            transform: translateY(-2px);
+            border-color: #D0D0D0;
+        }
+
+        .article-modal .btn-primary {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            border: none;
+            color: white;
+        }
+
+        .article-modal .btn-primary:hover {
+            background: linear-gradient(45deg, #FF8E53, #FF6B6B);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .telegraph-link {
+            color: #FF6B6B;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .telegraph-link:hover {
+            color: #FF8E53;
+            text-decoration: underline;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.2rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: relative;
+            background: white;
+            margin: 15% auto;
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #424242;
+        }
+
+        .article-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            color: #424242;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #FFD54F;
+            outline: none;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #FFE082, #FFD54F);
+            color: #424242;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            padding: 20px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1, h2 {
+            color: #424242;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            background: linear-gradient(45deg, #FFE082, #FFD54F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .hero-text {
+            font-size: 1.2em;
+            line-height: 1.6;
+            color: #616161;
+            text-align: center;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .blog-filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #424242;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: linear-gradient(45deg, #FFE082, #FFD54F);
+            transform: translateY(-2px);
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .blog-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 25px;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .blog-content {
+            padding: 0;
+        }
+
+        .blog-title {
+            color: #424242;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            font-weight: 600;
+        }
+
+        .blog-excerpt {
+            color: #616161;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #757575;
+            font-size: 0.9em;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-read {
+            background: linear-gradient(45deg, #FFE082, #FFD54F);
+            color: #424242;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .btn-read:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .success-stories {
+            margin-top: 60px;
+        }
+
+        .stories-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .story-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .story-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .story-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            border: 3px solid #FFE082;
+            padding: 3px;
+        }
+
+        .story-title {
+            color: #424242;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .story-text {
+            color: #616161;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .story-author {
+            color: #757575;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .newsletter-section {
+            background: linear-gradient(45deg, #FFE082, #FFD54F);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .newsletter-title {
+            color: #424242;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .newsletter-btn {
+            background: #424242;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .newsletter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .login-btn {
+            background: linear-gradient(45deg, #FFE082, #FFD54F);
+            color: #424242;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .nav-links {
+                margin-top: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+
+            .container {
+                margin-top: 150px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .article-modal .modal-dialog {
+                margin: 1rem;
+                min-height: calc(100% - 2rem);
+            }
+            
+            .article-modal .modal-body {
+                padding: 20px;
+            }
+            
+            .article-modal .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="logo">Vetka</a>
+        <nav class="nav-links">
+            {% if session.get('user_id') %}
+                <a href="{{ url_for('about') }}" class="nav-link">О нас</a>
+                <a href="{{ url_for('business') }}" class="nav-link">Для компаний</a>
+                <a href="{{ url_for('community') }}" class="nav-link">Сообщество</a>
+                <a href="{{ url_for('blog') }}" class="nav-link">Блог</a>
+                <a href="{{ url_for('shop') }}" class="nav-link">Магазин</a>
+                <a href="{{ url_for('lk', user_id=session.get('user_id')) }}" class="nav-link">Личный кабинет</a>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Выйти</a>
+            {% else %}
+                <a href="{{ url_for('about') }}" class="nav-link">О нас</a>
+                <a href="{{ url_for('business') }}" class="nav-link">Для компаний</a>
+                <a href="{{ url_for('community') }}" class="nav-link">Сообщество</a>
+                <a href="{{ url_for('blog') }}" class="nav-link">Блог</a>
+                <a href="{{ url_for('login') }}" class="login-btn">Войти</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="section">
+            <h1>Блог Vetka</h1>
+            <p class="hero-text">
+                Полезные материалы, истории успеха и советы от экспертов. Узнайте, как другие участники сообщества развивают свои навыки и достигают целей.
+            </p>
+
+            <div class="blog-grid">
+                {% for post in posts %}
+                <div class="blog-card">
+                    <div class="blog-content">
+                        <h3 class="blog-title">{{ post[1] }}</h3>
+                        <p class="blog-excerpt">{{ post[2] }}</p>
+                        <div class="blog-meta">
+                            <div class="meta-item">
+                                <span>👤</span>
+                                <span>{{ post[3] }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span>👁️</span>
+                                <span class="views-count" data-post-id="{{ post[0] }}">{{ post[6] }}</span>
+                            </div>
+                        </div>
+                        <a href="{{ post[4] }}" target="_blank" class="btn-read" data-post-id="{{ post[0] }}">Читать далее</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="success-stories">
+                <h2>Истории успеха</h2>
+                <div class="stories-grid">
+                    <div class="story-card">
+                        <h3 class="story-title">🚀 От нуля до Senior Python Developer</h3>
+                        <p class="story-text">
+                            "Всего за 8 месяцев с поддержкой комьюнити я освоил Python с нуля и устроился в топовую IT-компанию! Каждый ваш фидбек стал ступенькой к успеху."
+                        </p>
+                        <div class="story-author">Алексей, Senior Python Developer</div>
+                    </div>
+
+                    <div class="story-card">
+                        <h3 class="story-title">👥 От интроверта к лидеру команд</h3>
+                        <p class="story-text">
+                            "Мастермайнды раскрыли мои скрытые таланты: за полгода я прокачал soft skills до уровня, о котором боялся мечтать. Теперь руковожу международными проектами с уверенностью!"
+                        </p>
+                        <div class="story-author">Дмитрий, Lead Product Manager</div>
+                    </div>
+
+                    <div class="story-card">
+                        <h3 class="story-title">💎 Стартап-история: от гаража до миллиона</h3>
+                        <p class="story-text">
+                            "Нашел здесь не просто партнеров — команду мечты. Вместе мы взлетели с идеи на салфетке до статуса "Стартап года" в Forbes. Невозможное возможно!"
+                        </p>
+                        <div class="story-author">Артем, Tech Founder</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="newsletter-section">
+                <h2 class="newsletter-title">Подпишитесь на обновления блога</h2>
+                <p class="hero-text">Получайте первыми новые статьи и истории успеха</p>
+                <form class="newsletter-form" action="{{ url_for('subscribe_newsletter') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="email" name="email" placeholder="Ваш email" class="newsletter-input" required>
+                    <button type="submit" class="newsletter-btn">Подписаться</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Кнопка "Написать статью" -->
+    <button class="write-article-btn" data-bs-toggle="modal" data-bs-target="#articleModal">
+        <i class="fas fa-pen"></i>
+        Предложить статью
+    </button>
+
+    <!-- Модальное окно для публикации статьи -->
+    <div class="modal fade article-modal" id="articleModal" tabindex="-1" aria-labelledby="articleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="articleModalLabel">
+                        <i class="fas fa-newspaper"></i>
+                        Предложить статью
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="/blog/publish" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-4">
+                            <label for="authorName" class="form-label">Ваше имя</label>
+                            <input type="text" class="form-control" id="authorName" name="authorName" required placeholder="Введите ваше имя">
+                        </div>
+                        <div class="mb-4">
+                            <label for="articleTitle" class="form-label">Заголовок статьи</label>
+                            <input type="text" class="form-control" id="articleTitle" name="articleTitle" required placeholder="Введите заголовок статьи">
+                        </div>
+                        <div class="mb-4">
+                            <label for="articleExcerpt" class="form-label">Краткое описание</label>
+                            <textarea class="form-control" id="articleExcerpt" name="articleExcerpt" required placeholder="Опишите кратко содержание статьи"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label for="articleUrl" class="form-label">
+                                Ссылка на статью в 
+                                <a href="https://telegra.ph/" target="_blank" class="telegraph-link">telegra.ph</a>
+                            </label>
+                            <input type="url" class="form-control" id="articleUrl" name="articleUrl" required placeholder="https://telegra.ph/...">
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times"></i>
+                                Отмена
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                                Отправить на публикацию
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const readButtons = document.querySelectorAll('.btn-read');
+            
+            readButtons.forEach(button => {
+                button.addEventListener('click', async function(e) {
+                    const postId = this.dataset.postId;
+                    
+                    try {
+                        const response = await fetch(`/blog/increment-views/${postId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token() }}'
+                            }
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.views !== undefined) {
+                            // Обновляем счетчик просмотров для этой статьи
+                            const viewsCount = document.querySelector(`.views-count[data-post-id="${postId}"]`);
+                            if (viewsCount) {
+                                viewsCount.textContent = data.views;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Ошибка при обновлении просмотров:', error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

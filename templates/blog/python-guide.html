@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Полное руководство по Python - Skill Exchange Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto', sans-serif;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{{ url_for('static', filename='images/python-guide.jpg') }}") center/cover;
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #FFE082;
+            text-decoration: none;
+            border-radius: 24px;
+            margin-bottom: 30px;
+            transition: background 0.3s ease;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .back-button:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        h1 {
+            color: #424242;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            color: #616161;
+            margin-bottom: 40px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .article-content {
+            text-align: left;
+            color: #424242;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .article-content h2 {
+            color: #212121;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .article-content p {
+            margin-bottom: 20px;
+        }
+
+        .article-content code {
+            background: #f5f5f5;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .article-content pre {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .article-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .article-content ul, .article-content ol {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        .article-content li {
+            margin-bottom: 10px;
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid #FFE082;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #616161;
+            font-style: italic;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .article-footer {
+            border-top: 1px solid #EEEEEE;
+            padding-top: 20px;
+            margin-top: 40px;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .author-name {
+            color: #424242;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .article-meta {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/blog" class="back-button">← Назад к блогу</a>
+    
+    <div class="container">
+        <h1>Полное руководство по Python: от основ до продвинутых концепций</h1>
+        
+        <div class="article-meta">
+            <div class="meta-item">
+                <span>📅</span>
+                <span>15 марта 2024</span>
+            </div>
+            <div class="meta-item">
+                <span>⏱️</span>
+                <span>15 минут чтения</span>
+            </div>
+            <div class="meta-item">
+                <span>👤</span>
+                <span>Александр Петров</span>
+            </div>
+        </div>
+
+        <div class="article-content">
+            <p>
+                Python - один из самых популярных языков программирования в мире. Его простота и читаемость делают 
+                его идеальным выбором как для начинающих, так и для опытных разработчиков. В этом руководстве мы 
+                рассмотрим все основные концепции Python и продвинутые техники.
+            </p>
+
+            <h2>Основы Python</h2>
+            <p>
+                Python - это интерпретируемый язык программирования высокого уровня. Вот простой пример кода:
+            </p>
+            <pre><code>print("Привет, мир!")
+x = 42
+y = "Python"
+print(f"Число: {x}, Строка: {y}")</code></pre>
+
+            <h2>Переменные и типы данных</h2>
+            <p>
+                В Python переменные создаются при присваивании значения. Основные типы данных:
+            </p>
+            <ul>
+                <li>Числа (int, float)</li>
+                <li>Строки (str)</li>
+                <li>Списки (list)</li>
+                <li>Кортежи (tuple)</li>
+                <li>Словари (dict)</li>
+                <li>Множества (set)</li>
+            </ul>
+
+            <h2>Управление потоком</h2>
+            <p>
+                Python поддерживает стандартные конструкции управления потоком:
+            </p>
+            <pre><code># Условный оператор
+if x > 0:
+    print("Положительное число")
+elif x < 0:
+    print("Отрицательное число")
+else:
+    print("Ноль")
+
+# Цикл for
+for i in range(5):
+    print(i)
+
+# Цикл while
+while x > 0:
+    print(x)
+    x -= 1</code></pre>
+
+            <h2>Функции</h2>
+            <p>
+                Функции в Python определяются с помощью ключевого слова def:
+            </p>
+            <pre><code>def greet(name):
+    return f"Привет, {name}!"
+
+# Использование функции
+message = greet("Python")
+print(message)</code></pre>
+
+            <h2>Объектно-ориентированное программирование</h2>
+            <p>
+                Python поддерживает ООП. Вот пример класса:
+            </p>
+            <pre><code>class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+    def greet(self):
+        return f"Привет, я {self.name} и мне {self.age} лет"
+
+# Создание объекта
+person = Person("Алекс", 25)
+print(person.greet())</code></pre>
+
+            <blockquote>
+                Python - это язык, который позволяет писать код быстро и эффективно. Его философия 
+                "Pythonic way" делает код не только функциональным, но и элегантным.
+            </blockquote>
+
+            <h2>Работа с файлами</h2>
+            <p>
+                Python предоставляет удобные инструменты для работы с файлами:
+            </p>
+            <pre><code># Чтение файла
+with open('file.txt', 'r') as f:
+    content = f.read()
+
+# Запись в файл
+with open('output.txt', 'w') as f:
+    f.write('Привет, мир!')</code></pre>
+
+            <h2>Обработка исключений</h2>
+            <p>
+                Обработка ошибок в Python осуществляется через try-except:
+            </p>
+            <pre><code>try:
+    result = 10 / 0
+except ZeroDivisionError:
+    print("Ошибка: деление на ноль")
+finally:
+    print("Этот код выполнится всегда")</code></pre>
+        </div>
+
+        <div class="article-footer">
+            <div class="author-info">
+                <div class="author-name">Александр Петров</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

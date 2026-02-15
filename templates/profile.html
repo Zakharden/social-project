@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль - {{ user.name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/core/main.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            color: #424242;
+            text-decoration: none;
+            border-radius: 24px;
+            transition: background 0.3s ease;
+            z-index: 1000;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .back-button:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: #FFE082;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto', sans-serif;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{{ url_for('static', filename='images/registration.jpg') }}") center/cover;
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 4px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            color: #424242;
+            font-size: 1.4em;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .star-rating {
+            font-size: 24px;
+            cursor: pointer;
+            color: #e4e5e9;
+        }
+
+        .star-rating .active {
+            color: #ffc107;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #616161;
+            border: none;
+            border-radius: 24px;
+            font-size: 1.1em;
+            transition: background 0.3s ease;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #757575;
+        }
+
+        .review {
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .reviewer-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .review-date {
+            color: #757575;
+            font-size: 0.9em;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .skill-tag {
+            background: #FFF3B0;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.9em;
+            color: #424242;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .social-link {
+            color: #616161;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .social-link:hover {
+            color: #FFE082;
+        }
+
+        .meeting-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .meetings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .meeting-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .meeting-platform {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .meeting-time {
+            color: #616161;
+        }
+
+        .meeting-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #FFE082;
+            box-shadow: 0 0 0 2px rgba(255, 224, 130, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <a href="/search" class="back-button">← Вернуться</a>
+    <div class="container">
+        <div class="profile-header">
+            <img src="{{ user.photo_path or url_for('static', filename='images/default-avatar.jpg') }}" class="profile-photo" alt="Фото профиля">
+            <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+            <div class="rating mb-2">
+                {% for i in range(5) %}
+                    <span class="star-rating {% if i < user.rating|round|int %}active{% endif %}">★</span>
+                {% endfor %}
+                <small class="text-muted">({{ user.review_count }} отзывов)</small>
+            </div>
+            <p class="text-muted">{{ user.location }}</p>
+        </div>
+
+        <div class="section-card">
+            <h3 class="section-title">О себе</h3>
+            <p>{{ user.about }}</p>
+        </div>
+
+        <div class="section-card">
+            <h3 class="section-title">Навыки</h3>
+            <div class="mb-3">
+                <h5>Могу научить:</h5>
+                <div class="skills-list">
+                    {% if user.teach_skills %}
+                        {% for skill in user.teach_skills %}
+                            <span class="skill-tag">{{ skill.strip() }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">Нет навыков</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <h5>Хочу научиться:</h5>
+                <div class="skills-list">
+                    {% if user.learn_skills %}
+                        {% for skill in user.learn_skills %}
+                            <span class="skill-tag">{{ skill.strip() }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">Нет навыков</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h3 class="section-title">Контакты</h3>
+            {% if user.work_place %}
+                <p><strong>Место работы:</strong> {{ user.work_place }}</p>
+            {% endif %}
+            {% if user.study_place %}
+                <p><strong>Место учебы:</strong> {{ user.study_place }}</p>
+            {% endif %}
+            <div class="social-links">
+                {% if user.social_vk %}
+                    <a href="{{ user.social_vk }}" class="social-link" target="_blank">ВКонтакте</a>
+                {% endif %}
+                {% if user.social_tg %}
+                    <a href="{{ user.social_tg }}" class="social-link" target="_blank">Telegram</a>
+                {% endif %}
+                {% if user.social_gh %}
+                    <a href="{{ user.social_gh }}" class="social-link" target="_blank">GitHub</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h3 class="section-title">Выберите время для сессии</h3>
+            <div id="calendar"></div>
+            
+            {% if session.user_id and session.user_id != user.id %}
+            <div class="meeting-form mt-4">
+                <h4>Предложить встречу</h4>
+                <form action="{{ url_for('create_meeting', user_id=user.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label class="form-label">Платформа</label>
+                        <select class="form-select" name="platform" required>
+                            <option value="">Выберите платформу</option>
+                            <option value="zoom">Zoom</option>
+                            <option value="google_meet">Google Meet</option>
+                            <option value="yandex_telemost">Яндекс Телемост</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ссылка на встречу</label>
+                        <input type="url" class="form-control" name="meeting_link" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Время встречи</label>
+                        <input type="datetime-local" class="form-control" name="scheduled_time" required>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-video me-2"></i>Предложить встречу
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if meetings %}
+        <div class="section-card">
+            <h3 class="section-title">Предстоящие встречи</h3>
+            <div class="meetings-list">
+                {% for meeting in meetings %}
+                <div class="meeting-item">
+                    <div class="meeting-platform">
+                        {% if meeting.platform == 'zoom' %}
+                            <i class="fas fa-video text-primary"></i> Zoom
+                        {% elif meeting.platform == 'google_meet' %}
+                            <i class="fas fa-video text-danger"></i> Google Meet
+                        {% else %}
+                            <i class="fas fa-video text-success"></i> Яндекс Телемост
+                        {% endif %}
+                    </div>
+                    <div class="meeting-time">
+                        {{ meeting.scheduled_time.strftime('%d.%m.%Y %H:%M') }}
+                    </div>
+                    <div class="meeting-actions">
+                        <a href="{{ meeting.meeting_link }}" target="_blank" class="btn btn-sm btn-primary">
+                            <i class="fas fa-external-link-alt me-1"></i>Присоединиться
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if session.user_id and session.user_id != user.id %}
+        <div class="section-card">
+            <h3 class="section-title">Оставить отзыв</h3>
+            <form action="{{ url_for('add_review', user_id=user.id) }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <div class="star-rating" id="rating">
+                        <span data-value="1">☆</span>
+                        <span data-value="2">☆</span>
+                        <span data-value="3">☆</span>
+                        <span data-value="4">☆</span>
+                        <span data-value="5">☆</span>
+                    </div>
+                    <input type="hidden" name="rating" id="selected-rating" required>
+                </div>
+                <div class="mb-3">
+                    <textarea class="form-control" name="comment" placeholder="Ваш отзыв" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Отправить</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <div class="section-card">
+            <h3 class="section-title">Отзывы</h3>
+            {% for review in user.reviews %}
+            <div class="review">
+                <div class="review-header">
+                    <img src="{{ review.reviewer_photo }}" class="reviewer-photo" alt="Фото рецензента">
+                    <div>
+                        <strong>{{ review.reviewer_name }}</strong>
+                        <div class="review-date">{{ review.created_at.strftime('%d.%m.%Y') }}</div>
+                    </div>
+                </div>
+                <div class="star-rating mb-2">
+                    {% for i in range(5) %}
+                        <span class="{% if i < review.rating %}active{% endif %}">★</span>
+                    {% endfor %}
+                </div>
+                <p>{{ review.comment }}</p>
+            </div>
+            {% else %}
+            <p class="text-muted">Пока нет отзывов</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid/main.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,dayGridWeek'
+                },
+                events: '/api/available-slots?user_id={{ user.id }}',
+                eventColor: '#616161',
+                eventDisplay: 'block',
+                locale: 'ru',
+                buttonText: {
+                    today: 'Сегодня',
+                    month: 'Месяц',
+                    week: 'Неделя'
+                },
+                allDaySlot: false,
+                slotMinTime: '08:00:00',
+                slotMaxTime: '22:00:00'
+            });
+            calendar.render();
+        });
+
+        const stars = document.querySelectorAll('#rating span');
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const value = parseInt(this.dataset.value);
+                stars.forEach((s, idx) => {
+                    s.textContent = idx < value ? '★' : '☆';
+                    s.classList.toggle('active', idx < value);
+                });
+                document.getElementById('selected-rating').value = value;
+            });
+            
+            star.addEventListener('mouseover', function() {
+                const value = parseInt(this.dataset.value);
+                stars.forEach((s, idx) => {
+                    s.textContent = idx < value ? '★' : '☆';
+                    s.classList.toggle('active', idx < value);
+                });
+            });
+            
+            star.addEventListener('mouseout', function() {
+                const selectedValue = parseInt(document.getElementById('selected-rating').value) || 0;
+                stars.forEach((s, idx) => {
+                    s.textContent = idx < selectedValue ? '★' : '☆';
+                    s.classList.toggle('active', idx < selectedValue);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
