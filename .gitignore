@@ -66,6 +66,13 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+*.db
+*.sqlite
+*.sqlite3
+*.xlsx
+survey_results.*
+static/avatars/*
+!static/avatars/.gitkeep
 
 # Flask stuff:
 instance/

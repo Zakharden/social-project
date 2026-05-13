@@ -659,15 +659,13 @@ def reset_password():
                 
                 # Отправляем email
                 reset_link = url_for('reset_password_confirm', token=token, _external=True)
-                if send_reset_email(email, reset_link):
-                    flash('Инструкции отправлены на ваш email', 'success')
-                else:
-                    flash('Ошибка отправки email', 'danger')
-            else:
-                flash('Пользователь с таким email не найден', 'danger')
+                send_reset_email(email, reset_link)
+
+            # Avoid account enumeration: the user-facing response is identical.
+            flash('Если аккаунт существует, инструкции отправлены на email', 'success')
             
-        except Exception as e:
-            flash(f'Ошибка: {str(e)}', 'danger')
+        except Exception:
+            flash('Если аккаунт существует, инструкции отправлены на email', 'success')
         finally:
             if 'cur' in locals():
                 cur.close()
